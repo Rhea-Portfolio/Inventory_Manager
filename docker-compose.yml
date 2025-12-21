@@ -1,0 +1,28 @@
+services:
+  money-manager:
+    build: .
+    container_name: flask_app
+    command: flask run --host=0.0.0.0 --port=5000
+    volumes:
+      - .:/app
+    ports:
+      - "5001:5000"
+    environment:
+      FLASK_APP: app.py
+      FLASK_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres-container:5432/postgres
+    depends_on:
+      - postgres-container
+
+  postgres-container:
+    image: postgres:18
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /opt/pgsql_data_18:/var/lib/postgresql/data

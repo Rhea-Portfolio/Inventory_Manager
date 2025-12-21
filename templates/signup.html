@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+</head>
+<body>
+
+<h2>Create a New User</h2>
+
+<form id="userForm">
+    <label>Username:</label><br>
+    <input type="text" id="username" required><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" id="email" required><br><br>
+
+    <button type="submit">Create User</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+document.getElementById("userForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const payload = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value
+    };
+
+    const response = await fetch("/users", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    document.getElementById("result").innerText = "User created: " + JSON.stringify(data);
+});
+</script>
+
+</body>
+</html>
