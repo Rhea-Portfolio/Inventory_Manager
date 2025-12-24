@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center p-6">
+
+    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 w-full max-w-lg">
+        
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
+            Transaction Overview
+        </h2>
+
+        <form id="userForm" class="space-y-6">
+
+            <!-- CSV Upload -->
+            <div>
+                <label class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                    CSV upload:
+                </label>
+                <input 
+                    type="file" 
+                    id="csv_file" 
+                    required
+                    class="block w-full text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+            </div>
+
+            <!-- Bank Selection -->
+            <div>
+                <label class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                    Select which bank this CSV is from
+                </label>
+
+                <select 
+                    id="bank_choice" 
+                    name="bank_choice"
+                    class="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                    <option value="banktype_ing">ING</option>
+                    <option value="banktype_abn_amro">ABN AMRO</option>
+                    <option value="banktype_rabobank">RABOBANK</option>
+                    <option value="banktype_revolut">REVOLUT</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+                Submit
+            </button>
+
+        </form>
+
+        <p id="result" class="mt-4 text-gray-700 dark:text-gray-300"></p>
+
+    </div>
+
+</body>
+</html>

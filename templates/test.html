@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My first Tailwind page</title>
+
+    <!-- 1) Load Tailwind from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <!-- 2) Full-page container -->
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+      <!-- 3) Small label text -->
+      <p class="text-sm font-semibold text-indigo-500 tracking-wide mb-2">
+        Welcome to Tailwind CSS
+      </p>
+
+      <!-- 4) Big heading -->
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">
+        Hello, Rhea!
+      </h1>
+
+      <!-- 5) Normal paragraph -->
+      <p class="text-gray-600 mb-6">
+        This is a simple card built with Tailwind utility classes.
+        Try changing the classes and see what happens.
+      </p>
+
+      <!-- 6) Button -->
+      <button
+        class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition"
+      >
+        Click me
+      </button>
+    </div>
+  </body>
+</html>
