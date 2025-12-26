@@ -1,28 +1,71 @@
 services:
-  money-manager:
-    build: .
-    container_name: flask_app
-    command: flask run --host=0.0.0.0 --port=5000
-    volumes:
-      - .:/app
-    ports:
-      - "5001:5000"
-    environment:
-      FLASK_APP: app.py
-      FLASK_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@postgres-container:5432/postgres
-    depends_on:
-      - postgres-container
+  money-manager:                                 # Name of the service inside docker-compose
+    build: .                                     # Build the Docker image from the current folder (Dockerfile required)
 
-  postgres-container:
-    image: postgres:18
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
+    container_name: flask_app                    # The actual container name shown in Podman/Docker
+    restart: always                              # Keep restarting until DB is ready
+
+    command: flask run --host=0.0.0.0 --port=5000
+                                                 # Command executed when the container starts
+                                                 # --host=0.0.0.0 makes Flask reachable from outside the container
+                                                 # --port=5000 exposes Flask on port 5000 inside the container
+
     volumes:
-      - /opt/pgsql:/var/lib/postgresql
+      - .:/app                                   # Mount your project folder into /app inside the container
+                                                 # Lets you edit code locally and see changes immediately
+
+    ports:
+      - "5001:5000"                              # Map host port 5001 → container port 5000
+                                                 # You will open http://localhost:5001 in your browser
+
+    environment:                                 # Environment variables passed into the container
+      FLASK_APP: app.py                          # Tells Flask which file contains the application
+      FLASK_ENV: development                     # Enables debug mode (auto-reload, better error messages)
+      DATABASE_URL: postgresql://postgres:postgres@postgres-container:5432/postgres
+                                                 # Connection string for your Postgres database
+                                                 # Format: postgresql://USER:PASS@HOST:PORT/DBNAME
+                                                 # HOST = postgres-container (the name of your DB service)
+
+    depends_on:
+      postgres-container:                      # Start the Postgres service before starting Flask
+                                                 # NOTE: does NOT wait for DB to be *ready*, only started
+        condition: service_healthy             # Wait until Postgres passes healthcheck
+
+    healthcheck:                                 # Healthcheck for the Flask app
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
+                                                 # Try to reach the Flask server's root URL
+                                                 # -f = fail on HTTP errors
+                                                 # exit 1 = mark container unhealthy if unreachable
+      interval: 10s                              # Check every 10 seconds
+      timeout: 3s                                # Fail if no response within 3 seconds
+      retries: 3                                 # Mark unhealthy after 3 failed checks
+      start_period: 5s                           # Give Flask time to boot before checking
+
+
+
+  postgres-container:                     # Name of the service inside docker-compose
+    image: postgres:18                    # Use the official Postgres image, version 18
+    container_name: postgres_db           # The actual container name shown in Podman/Docker
+    restart: always                       # Automatically restart if the container stops or crashes
+
+    environment:                          # Environment variables passed into the container
+      POSTGRES_USER: postgres             # Username for the database
+      POSTGRES_PASSWORD: postgres         # Password for the database
+      POSTGRES_DB: postgres               # Name of the default database to create
+
+    ports:
+      - "5432:5432"                       # Expose container port 5432 to host port 5432
+                                          # Format: "HOST_PORT:CONTAINER_PORT"
+
+    volumes:
+    # - /opt/pgsql:/var/lib/postgresql    # Persist database files on your host machine
+                                          # Left side = host folder
+                                          # Right side = folder inside the container
+      - /Users/rheahau/postgres_data:/var/lib/postgresql
+
+    healthcheck:                                 # Check if Postgres is actually ready
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s                                # Check every 5 seconds
+      timeout: 3s
+      retries: 5                                  # Mark as unhealthy after 5 failures
+      start_period: 5s                            # Give Postgres time to boot
